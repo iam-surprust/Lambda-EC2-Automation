@@ -1,3 +1,58 @@
+Automating AWS EC2 Start/Stop with Lambda and EventBridge Scheduler
+
+Managing AWS costs is a top priority for most organizations, and one simple yet effective optimization is to automatically stop non-production EC2 instances during non-working hours and start them back when needed. Recently, I implemented this setup using AWS Lambda, EventBridge Scheduler, and boto3, and I’d like to share how this works in a detailed but easy-to-follow way.
+
+Why Automate EC2 Start/Stop?
+
+•⁠  ⁠Cost Savings: EC2 instances incur charges when running, so shutting them down outside of business hours can significantly reduce monthly costs.
+•⁠  ⁠Efficiency: Manual stopping and starting is error-prone. Automation ensures consistency.
+•⁠  ⁠Scalability: Works across multiple accounts, regions, or instance groups without manual intervention.
+
+ Components Used
+
+1.⁠ ⁠AWS Lambda – Serverless compute that runs Python code to start/stop EC2 instances.
+2.⁠ ⁠boto3 – AWS SDK for Python, used inside Lambda to interact with EC2 APIs.
+3.⁠ ⁠EventBridge Scheduler – Defines cron-like rules to trigger Lambda at specific times (e.g., stop at 8 PM, start at 8 AM).
+
+High-Level Architecture
+
+1.⁠ ⁠EventBridge Scheduler triggers Lambda based on time rules.
+2.⁠ ⁠Lambda Function executes boto3 commands to stop or start specific EC2 instances.
+3.⁠ ⁠CloudWatch Logs capture execution results for monitoring and troubleshooting.
+
+ Implementation Steps
+
+1.⁠ ⁠Create IAM Role for Lambda
+
+•⁠  ⁠Permissions required: ⁠ ec2:StartInstances ⁠, ⁠ ec2:StopInstances ⁠, ⁠ ec2:DescribeInstances ⁠.
+•⁠  ⁠Attach a policy like ⁠ AmazonEC2FullAccess ⁠ or a custom least-privilege policy.
+
+2.⁠ ⁠Write the Lambda Function (Python + boto3)
+
+•⁠  ⁠The function reads instance IDs from environment variables.
+•⁠  ⁠EventBridge passes the action (start/stop) into the Lambda event payload.
+
+3.⁠ ⁠Configure Environment Variables
+
+
+4.⁠ ⁠Setup EventBridge Scheduler
+
+•⁠  ⁠Rule 1: Trigger Lambda with ⁠ { "action": "stop" } ⁠ at 8 PM (local time).
+•⁠  ⁠Rule 2: Trigger Lambda with ⁠ { "action": "start" } ⁠ at 8 AM (local time).
+•⁠  ⁠Ensure correct time zone in the cron expressions.
+
+Key Considerations
+
+•⁠  ⁠Tag-Based Filtering: Instead of hardcoding instance IDs, you can modify the Lambda to filter by tags (e.g., ⁠ Environment=Dev ⁠).
+•⁠  ⁠Error Handling: Add try/except blocks to handle API errors gracefully.
+•⁠  ⁠Notifications: Integrate with SNS to notify teams when instances fail to start/stop.
+
+Business Impact
+
+•⁠  ⁠Immediate cost savings by reducing running hours for non-critical EC2 workloads.
+•⁠  ⁠Improved governance by enforcing a consistent start/stop schedule.
+•⁠  ⁠Flexibility to adapt schedules to evolving business and project needs.
+
 1. Create an IAM Roles for AWS Lambda
 Create and IAM role for AWS Lambda to get permission to access Cloud Watch Logs and EC2 so it can invoke the Lambda Function.
 The JSON Document for IAM Role name- Lambda_stop_start_instances_Role
