@@ -2,6 +2,9 @@ Automating AWS EC2 Start/Stop with Lambda and EventBridge Scheduler
 
 Managing AWS costs is a top priority for most organizations, and one simple yet effective optimization is to automatically stop non-production EC2 instances during non-working hours and start them back when needed. Recently, I implemented this setup using AWS Lambda, EventBridge Scheduler, and boto3, and I’d like to share how this works in a detailed but easy-to-follow way.
 
+<img width="805" height="805" alt="image" src="https://github.com/user-attachments/assets/8206d2e5-2db1-412e-a0bf-c335439fd1b0" />
+
+
 Why Automate EC2 Start/Stop?
 
 •⁠  ⁠Cost Savings: EC2 instances incur charges when running, so shutting them down outside of business hours can significantly reduce monthly costs.
